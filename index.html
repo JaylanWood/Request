@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>请求与响应</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+
+        }
+
+        h3 {
+            color: rgb(153, 94, 26);
+        }
+
+        iframe {
+            border: 1px solid #7a7a7a;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        div {
+            border: 1px solid rgb(173, 173, 173);
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            margin: 10px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <h1>余额<span id="amount">&&&amount&&&</span></h1>
+
+    <div>
+        <h3>用form发请求</h3>
+
+        <form action="/formpay" method="POST" target="result">
+            <input type="submit" value="form付款">
+        </form>
+
+        <h6>用iframe展示form接收到的响应页面</h6>
+        <iframe name="result" src="about:blank" frameborder="1" height="25"></iframe>
+    </div>
+
+    <div>
+        <h3>用img发请求</h3>
+
+        <button id="imgButton">img付款</button>
+        <script>
+            imgButton.addEventListener('click', (e) => {
+                let image = document.createElement('img')
+                image.src = '/imgpay'
+                image.onload = function () {
+                    alert('imgpay success')
+                    // window.location.reload() // 1.成功后帮用户刷新页面
+                    amount.innerText = amount.innerText - 1 // 2.直接局部修改余额
+                }
+                image.onerror = function () {
+                    alert('imgpay fail')
+                }
+            })
+        </script>
+    </div>
+
+    <div>
+        <h3>用script发请求</h3>
+
+        <button id="scriptButton">script付款</button>
+        <script>
+            scriptButton.addEventListener('click', (e) => {
+                let script = document.createElement('script')
+                script.src = '/scriptpay'
+                document.body.appendChild(script)
+                script.onload = function (e) { // 状态码是 200~299 则表示成功      
+                    alert('scriptpay success')
+                    e.currentTarget.remove() // 把服务器返回的 JS 标签移除。
+                }
+                script.onerror = function (e) { // 状态码大于等于 400 则表示失败
+                    alert('scriptpay fail')
+                    e.currentTarget.remove()
+                }
+            })
+        </script>
+    </div>
+
+    <div>
+        <h3>用JSONP发请求</h3>
+
+        <button id="JSONPButton">JSONP付款</button>
+        <script>
+            JSONPButton.addEventListener('click', (e) => {
+                // 1.创建script
+                var script = document.createElement('script')
+                // 2.创建随机字符串
+                var functionName = 'jaylan' + parseInt(Math.random() * 10000000, 10)
+                // 3.创建一个函数
+                window[functionName] = function () {
+                    amount.innerText = amount.innerText - 0 - 1
+                }
+                // 4.用 script 发起请求。请求路径是 /JSONPpay，请求的查询参数是 callback=functionName。
+                script.src = '/JSONPpay?callback=' + functionName
+                // 5.把 script 插入 body，使得 script 生效执行。
+                document.body.appendChild(script)
+
+                script.onload = function (e) { // 状态码是 200~299 则表示成功 
+                    e.currentTarget.remove()
+                    delete window[functionName] // 请求完了就干掉这个随机函数
+                }
+                script.onerror = function (e) { // 状态码大于等于 400 则表示失败
+                    e.currentTarget.remove()
+                    delete window[functionName] // 请求完了就干掉这个随机函数
+                }
+
+            })
+        </script>
+    </div>
+</body>
+
+</html>
