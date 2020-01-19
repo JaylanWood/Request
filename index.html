@@ -104,8 +104,9 @@
                 // 2.创建随机字符串
                 var functionName = 'jaylan' + parseInt(Math.random() * 10000000, 10)
                 // 3.创建一个函数
-                window[functionName] = function () {
+                window[functionName] = function (JSONStr) {
                     amount.innerText = amount.innerText - 0 - 1
+                    alert(JSONStr)
                 }
                 // 4.用 script 发起请求。请求路径是 /JSONPpay，请求的查询参数是 callback=functionName。
                 script.src = '/JSONPpay?callback=' + functionName
