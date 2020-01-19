@@ -39,6 +39,8 @@
 
 
 <body>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
     <h1>余额<span id="amount">&&&amount&&&</span></h1>
 
     <div>
@@ -105,7 +107,7 @@
                 var functionName = 'jaylan' + parseInt(Math.random() * 10000000, 10)
                 // 3.创建一个函数
                 window[functionName] = function (JSONStr) {
-                    amount.innerText = amount.innerText - 0 - 1
+                    amount.innerText = amount.innerText - 1
                     alert(JSONStr)
                 }
                 // 4.用 script 发起请求。请求路径是 /JSONPpay，请求的查询参数是 callback=functionName。
@@ -125,6 +127,35 @@
             })
         </script>
     </div>
+    <div>
+        <h3>jQuery用JSONP发请求</h3>
+
+        <button id="jQueryJSONPButton">jQuery用JSONP付款</button>
+        <script>
+            jQueryJSONPButton.addEventListener('click', (e) => {
+                // 使用JSONP。jQuery把JSONP归类在ajax，不用在意。
+                $.ajax({
+                    url: "http://localhost:8888/jQueryJSONPpay",
+                    jsonp: "callback",
+                    dataType: "jsonp",
+
+                    // 请求的 JSON 内容
+                    // data: {
+                    //     q: "select title,abstract,url from search.news where query=\"cat\"",
+                    //     format: "json"
+                    // },
+
+                    //  请求成功后执行的函数
+                    success: function (response) {
+                        if (response.success) {
+                            amount.innerText = amount.innerText - 1
+                        }
+                    }
+                })
+            })
+        </script>
+    </div>
+
 </body>
 
 </html>

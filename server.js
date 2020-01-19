@@ -65,7 +65,7 @@ var server = http.createServer(function (request, response) {
     response.statusCode = 200
     response.end()
   } else if (path === '/JSONPpay') {
-    // 5 请求 /JSONPpay。
+    // 5.请求 /JSONPpay。
     var amount = fs.readFileSync('./money.db', 'utf8')
     var newAmount = amount - 1
     fs.writeFileSync('./money.db', newAmount)
@@ -75,6 +75,23 @@ var server = http.createServer(function (request, response) {
     // 5.3 把函数调用的字符串返回给浏览器。浏览器得到字符串就执行了这个符合 JS 语法的命令。
     // {"success":true,"left":${newAmount}} 这个是 JSON。
     // ${callback}.call(undefined, + JSON + ) 就是 JSONP，JSON + Padding。
+    response.setHeader('Content-Type', 'application/json')
+    response.write(`
+      ${callback}.call(undefined, {
+        "success":true,
+        "left":${newAmount}
+      })
+    `)
+
+    response.statusCode = 200
+    response.end()
+  } else if (path === '/jQueryJSONPpay') {
+    // 6.请求 /jQueryJSONPpay。
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    let callback = query.callback
     response.setHeader('Content-Type', 'application/json')
     response.write(`
       ${callback}.call(undefined, {
