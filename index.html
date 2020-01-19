@@ -230,7 +230,37 @@
                     })
                 </script>
             </div>
-
+            <div class='example'>
+                <h3>用XMLHttpRequest发请求 JSON响应</h3>
+                <button id='JSONpay'>用XMLHttpRequest发请求 JSON响应</button>
+                <script>
+                    JSONpay.addEventListener('click', (e) => {
+                        // 1.构造 XMLHttpRequest 请求
+                        let request = new XMLHttpRequest()
+                        // 2.监控请求的状态变化
+                        request.onreadystatechange = () => {
+                            if (request.readyState === 4) {
+                                // 状态4===响应完毕
+                                if (request.status >= 200 && request.status < 300) {
+                                    console.log('请求成功')
+                                    let string = request.responseText
+                                    // 把符合 JSON 语法的字符串，转换成 JS 对应的值。
+                                    let object = window.JSON.parse(string)
+                                    // JSON.parse 是浏览器提供的
+                                    console.log(typeof object)
+                                    console.log(object)
+                                } else if (request.status >= 400) {
+                                    console.log('请求失败')
+                                }
+                            }
+                        }
+                        // 3.配置请求
+                        request.open('GET', './JSONpay')
+                        // 4.发送请求
+                        request.send()
+                    })
+                </script>
+            </div>
         </div>
     </main>
 </body>

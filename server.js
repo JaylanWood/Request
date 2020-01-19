@@ -138,6 +138,24 @@ var server = http.createServer(function (request, response) {
       </note>
     `)
     response.end()
+  } else if (path === '/JSONpay') {
+    // 10.请求 /JSONpay。
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    response.statusCode = 200
+    response.setHeader('Content-Type', 'text/json;charset=utf-8')
+    // JSON语法的字符串
+    response.write(`{
+      "note":{
+        "to":"八重樱",
+        "from":"飞鱼丸",
+        "heading":"嘤嘤嘤",
+        "body":"大姐你回来啦"
+      }
+    }`)
+    response.end()
   } else {
     // 0.请求失败。返回404.
     response.statusCode = 404
