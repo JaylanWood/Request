@@ -6,10 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>请求与响应</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header {
+            padding: 10px;
+        }
+
+        main {
+            display: flex;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         h1 {
@@ -27,7 +46,14 @@
             width: 150px;
         }
 
-        div {
+        .amountWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .amountWrapper,
+        .example {
             border: 1px solid rgb(173, 173, 173);
             border-radius: 10px;
             box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
@@ -39,123 +65,174 @@
 
 
 <body>
-    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <header>
+        <h1>前端请求总结</h1>
+    </header>
+    <main>
+        <div class="amountWrapper">
+            <h1>余额<span id="amount">&&&amount&&&</span></h1>
+        </div>
 
-    <h1>余额<span id="amount">&&&amount&&&</span></h1>
+        <div class="exampleWrapper">
+            <div class='example'>
+                <h3>用form发请求</h3>
+                <form action="/formpay" method="POST" target="result">
+                    <input type="submit" value="form付款">
+                </form>
+                <h6>用iframe展示form接收到的响应页面</h6>
+                <iframe name="result" src="about:blank" frameborder="1" height="25"></iframe>
+            </div>
 
-    <div>
-        <h3>用form发请求</h3>
-
-        <form action="/formpay" method="POST" target="result">
-            <input type="submit" value="form付款">
-        </form>
-
-        <h6>用iframe展示form接收到的响应页面</h6>
-        <iframe name="result" src="about:blank" frameborder="1" height="25"></iframe>
-    </div>
-
-    <div>
-        <h3>用img发请求</h3>
-
-        <button id="imgButton">img付款</button>
-        <script>
-            imgButton.addEventListener('click', (e) => {
-                let image = document.createElement('img')
-                image.src = '/imgpay'
-                image.onload = function () {
-                    alert('imgpay success')
-                    // window.location.reload() // 1.成功后帮用户刷新页面
-                    amount.innerText = amount.innerText - 1 // 2.直接局部修改余额
-                }
-                image.onerror = function () {
-                    alert('imgpay fail')
-                }
-            })
-        </script>
-    </div>
-
-    <div>
-        <h3>用script发请求</h3>
-
-        <button id="scriptButton">script付款</button>
-        <script>
-            scriptButton.addEventListener('click', (e) => {
-                let script = document.createElement('script')
-                script.src = '/scriptpay'
-                document.body.appendChild(script)
-                script.onload = function (e) { // 状态码是 200~299 则表示成功      
-                    alert('scriptpay success')
-                    e.currentTarget.remove() // 把服务器返回的 JS 标签移除。
-                }
-                script.onerror = function (e) { // 状态码大于等于 400 则表示失败
-                    alert('scriptpay fail')
-                    e.currentTarget.remove()
-                }
-            })
-        </script>
-    </div>
-
-    <div>
-        <h3>用JSONP发请求</h3>
-
-        <button id="JSONPButton">JSONP付款</button>
-        <script>
-            JSONPButton.addEventListener('click', (e) => {
-                // 1.创建script
-                var script = document.createElement('script')
-                // 2.创建随机字符串
-                var functionName = 'jaylan' + parseInt(Math.random() * 10000000, 10)
-                // 3.创建一个函数
-                window[functionName] = function (JSONStr) {
-                    amount.innerText = amount.innerText - 1
-                    alert(JSONStr)
-                }
-                // 4.用 script 发起请求。请求路径是 /JSONPpay，请求的查询参数是 callback=functionName。
-                script.src = '/JSONPpay?callback=' + functionName
-                // 5.把 script 插入 body，使得 script 生效执行。
-                document.body.appendChild(script)
-
-                script.onload = function (e) { // 状态码是 200~299 则表示成功 
-                    e.currentTarget.remove()
-                    delete window[functionName] // 请求完了就干掉这个随机函数
-                }
-                script.onerror = function (e) { // 状态码大于等于 400 则表示失败
-                    e.currentTarget.remove()
-                    delete window[functionName] // 请求完了就干掉这个随机函数
-                }
-
-            })
-        </script>
-    </div>
-    <div>
-        <h3>jQuery用JSONP发请求</h3>
-
-        <button id="jQueryJSONPButton">jQuery用JSONP付款</button>
-        <script>
-            jQueryJSONPButton.addEventListener('click', (e) => {
-                // 使用JSONP。jQuery把JSONP归类在ajax，不用在意。
-                $.ajax({
-                    url: "http://localhost:8888/jQueryJSONPpay",
-                    jsonp: "callback",
-                    dataType: "jsonp",
-
-                    // 请求的 JSON 内容
-                    // data: {
-                    //     q: "select title,abstract,url from search.news where query=\"cat\"",
-                    //     format: "json"
-                    // },
-
-                    //  请求成功后执行的函数
-                    success: function (response) {
-                        if (response.success) {
-                            amount.innerText = amount.innerText - 1
+            <div class='example'>
+                <h3>用img发请求</h3>
+                <button id="imgButton">img付款</button>
+                <script>
+                    imgButton.addEventListener('click', (e) => {
+                        let image = document.createElement('img')
+                        image.src = '/imgpay'
+                        image.onload = function () {
+                            alert('imgpay success')
+                            // window.location.reload() // 1.成功后帮用户刷新页面
+                            amount.innerText = amount.innerText - 1 // 2.直接局部修改余额
                         }
-                    }
-                })
-            })
-        </script>
-    </div>
+                        image.onerror = function () {
+                            alert('imgpay fail')
+                        }
+                    })
+                </script>
+            </div>
 
+            <div class='example'>
+                <h3>用script发请求</h3>
+                <button id="scriptButton">script付款</button>
+                <script>
+                    scriptButton.addEventListener('click', (e) => {
+                        let script = document.createElement('script')
+                        script.src = '/scriptpay'
+                        document.body.appendChild(script)
+                        script.onload = function (e) { // 状态码是 200~299 则表示成功      
+                            alert('scriptpay success')
+                            e.currentTarget.remove() // 把服务器返回的 JS 标签移除。
+                        }
+                        script.onerror = function (e) { // 状态码大于等于 400 则表示失败
+                            alert('scriptpay fail')
+                            e.currentTarget.remove()
+                        }
+                    })
+                </script>
+            </div>
+
+            <div class='example'>
+                <h3>用JSONP发请求</h3>
+                <button id="JSONPButton">JSONP付款</button>
+                <script>
+                    JSONPButton.addEventListener('click', (e) => {
+                        // 1.创建script
+                        var script = document.createElement('script')
+                        // 2.创建随机字符串
+                        var functionName = 'jaylan' + parseInt(Math.random() * 10000000, 10)
+                        // 3.创建一个函数
+                        window[functionName] = function (JSONStr) {
+                            amount.innerText = amount.innerText - 1
+                            alert(JSONStr)
+                        }
+                        // 4.用 script 发起请求。请求路径是 /JSONPpay，请求的查询参数是 callback=functionName。
+                        script.src = '/JSONPpay?callback=' + functionName
+                        // 5.把 script 插入 body，使得 script 生效执行。
+                        document.body.appendChild(script)
+
+                        script.onload = function (e) { // 状态码是 200~299 则表示成功 
+                            e.currentTarget.remove()
+                            delete window[functionName] // 请求完了就干掉这个随机函数
+                        }
+                        script.onerror = function (e) { // 状态码大于等于 400 则表示失败
+                            e.currentTarget.remove()
+                            delete window[functionName] // 请求完了就干掉这个随机函数
+                        }
+
+                    })
+                </script>
+            </div>
+            <div class='example'>
+                <h3>jQuery用JSONP发请求</h3>
+                <button id="jQueryJSONPButton">jQuery用JSONP付款</button>
+                <script>
+                    jQueryJSONPButton.addEventListener('click', (e) => {
+                        // 使用JSONP。jQuery把JSONP归类在ajax，不用在意。
+                        $.ajax({
+                            url: "http://localhost:8888/jQueryJSONPpay",
+                            jsonp: "callback",
+                            dataType: "jsonp",
+
+                            // 请求的 JSON 内容
+                            // data: {
+                            //     q: "select title,abstract,url from search.news where query=\"cat\"",
+                            //     format: "json"
+                            // },
+
+                            //  请求成功后执行的函数
+                            success: function (response) {
+                                if (response.success) {
+                                    amount.innerText = amount.innerText - 1
+                                }
+                            }
+                        })
+                    })
+                </script>
+            </div>
+
+            <div class='example'>
+                <h3>用a发请求</h3>
+                <a href="/apay">用a发请求</a>
+            </div>
+
+            <div class='example'>
+                <h3>用link发请求</h3>
+                <button id='linkpay' href="/linkpay">用link发请求</button>
+                <script>
+                    linkpay.onclick = function () {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet'
+                        link.href = '/linkpay'
+                        document.head.appendChild(link)
+                    }
+                </script>
+            </div>
+
+            <div class='example'>
+                <h3>用XMLHttpRequest发请求 XML响应</h3>
+                <button id='XMLpay'>用XMLHttpRequest发请求 XML响应</button>
+                <script>
+                    XMLpay.addEventListener('click', (e) => {
+                        // 1.构造 XMLHttpRequest 请求
+                        let request = new XMLHttpRequest()
+                        // 2.监控请求的状态变化
+                        request.onreadystatechange = () => {
+                            if (request.readyState === 4) {
+                                // 状态4===响应完毕
+                                if (request.status >= 200 && request.status < 300) {
+                                    console.log('请求成功')
+                                    // 把xml转化为dom
+                                    let parser = new DOMParser()
+                                    let xmlDoc = parser.parseFromString(request.responseText, "text/html")
+                                    // 用dom一样来操作xml
+                                    let heading = xmlDoc.getElementsByTagName('heading')[0].textContent
+                                    console.log('打印响应xml的heading内容：' + heading)
+                                } else if (request.status >= 400) {
+                                    console.log('请求失败')
+                                }
+                            }
+                        }
+                        // 3.配置请求
+                        request.open('GET', './XMLpay')
+                        // 4.发送请求
+                        request.send()
+                    })
+                </script>
+            </div>
+
+        </div>
+    </main>
 </body>
 
 </html>

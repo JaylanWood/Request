@@ -102,6 +102,42 @@ var server = http.createServer(function (request, response) {
 
     response.statusCode = 200
     response.end()
+  } else if (path === '/apay') {
+    // 7.请求 /apay。
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    response.write('apay success')
+    response.statusCode = 200
+    response.end()
+  } else if (path === '/linkpay') {
+    // 8.请求 /linkpay。
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    response.write('apay success')
+    response.statusCode = 200
+    response.end()
+  } else if (path === '/XMLpay') {
+    // 9.请求 /XMLpay。
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    response.statusCode = 200
+    response.setHeader('Content-Type', 'text/xml;charset=utf-8')
+    // XML语法的字符串
+    response.write(`
+      <note>
+        <to>sakura</to>
+        <form>jaylan</form>
+        <heading>welcome</heading>
+        <body>bengbengbeng</body>
+      </note>
+    `)
+    response.end()
   } else {
     // 0.请求失败。返回404.
     response.statusCode = 404
