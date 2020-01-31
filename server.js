@@ -33,7 +33,19 @@ var server = http.createServer(function (request, response) {
     response.write(string)
     response.statusCode = 200
     response.end()
-  } else if (path === '/formpay' || method.toUpperCase() === 'POST') {
+  } else if (path === '/style.css') {
+    var cssStr = fs.readFileSync('./style.css', 'utf8')
+    response.setHeader('Content-Type', 'text/css;charset=utf-8')
+    response.write(cssStr)
+    response.statusCode = 200
+    response.end()
+  } else if (path === '/jquery-3.4.1.min.js') {
+    var jQueryStr = fs.readFileSync('./jquery-3.4.1.min.js', 'utf8')
+    response.setHeader('Content-Type', 'application/javascript')
+    response.write(jQueryStr)
+    response.statusCode = 200
+    response.end()
+  } else if (path === '/formpay' && method.toUpperCase() === 'POST') {
     // 2.请求 /formpay 且类型是 POST。操作数据库，并返回 'success' 字符串。 
     var amount = fs.readFileSync('./money.db', 'utf8')
     var newAmount = amount - 1
@@ -146,7 +158,27 @@ var server = http.createServer(function (request, response) {
 
     response.statusCode = 200
     response.setHeader('Content-Type', 'text/json;charset=utf-8')
+    // CORS 跨源共享给http://frank.com:8001
+    response.setHeader('Access-Control-Allow-Origin', 'http://kkk.com:8001')
     // JSON语法的字符串
+    response.write(`{
+      "note":{
+        "to":"八重樱",
+        "from":"飞鱼丸",
+        "heading":"嘤嘤嘤",
+        "body":"大姐你回来啦"
+      }
+    }`)
+    response.end()
+  } else if (path === '/myQAJAXpay') {
+    // 11.请求 /myQAJAXpay
+    var amount = fs.readFileSync('./money.db', 'utf8')
+    var newAmount = amount - 1
+    fs.writeFileSync('./money.db', newAmount)
+
+    response.statusCode = 200
+    response.setHeader('Content-Type', 'text/json;charset=utf-8')
+    response.setHeader('Access-Control-Allow-Origin', 'http://kkk.com:8001')
     response.write(`{
       "note":{
         "to":"八重樱",

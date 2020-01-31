@@ -6,63 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>请求与响应</title>
-    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        header {
-            padding: 10px;
-        }
-
-        main {
-            display: flex;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        h1 {
-            text-align: center;
-
-        }
-
-        h3 {
-            color: rgb(153, 94, 26);
-        }
-
-        iframe {
-            border: 1px solid #7a7a7a;
-            border-radius: 5px;
-            width: 150px;
-        }
-
-        .amountWrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .amountWrapper,
-        .example {
-            border: 1px solid rgb(173, 173, 173);
-            border-radius: 10px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            padding: 5px;
-            margin: 10px;
-        }
-    </style>
+    <!-- <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script> -->
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery-3.4.1.min.js"></script>
 </head>
-
 
 <body>
     <header>
@@ -258,6 +205,139 @@
                         request.open('GET', './JSONpay')
                         // 4.发送请求
                         request.send()
+                    })
+                </script>
+            </div>
+            <div class='example'>
+                <h3>自制myQuery.AJAX发请求</h3>
+                <button id='myQAJAX'>自制myQuery.AJAX发请求</button>
+                <script>
+                    window.myQuery = function (nodeOrSelector) {
+                        let nodes = {}
+                        nodes.addClass = function () {}
+                        return nodes
+                    }
+                    window.myQuery.ajax = function ({
+                        url,
+                        method,
+                        body,
+                        successFn,
+                        failFn,
+                        headers
+                    }) {
+                        let request = new XMLHttpRequest()
+                        request.open(method, url)
+                        for (let key in headers) {
+                            let value = headers[key]
+                            request.setRequestHeader(key, value)
+                        }
+                        request.onreadystatechange = () => {
+                            if (request.readyState === 4) {
+                                if (request.status >= 200 && request.status < 300) {
+                                    // request.onreadystatechange 触发时，call successFn
+                                    successFn.call(undefined, request.responseText)
+                                } else if (request.status >= 400) {
+                                    failFn.call(undefined, request)
+                                }
+                            }
+                        }
+                        request.send(body)
+                    }
+                    // 使用方代码
+                    function f1(responseText) {
+                        console.log(responseText)
+                    }
+
+                    function f2(responseText) {
+                        amount.innerText = amount.innerText - 1
+                    }
+
+                    myQAJAX.addEventListener('click', (e) => {
+                        window.myQuery.ajax({
+                            url: '/myQAJAXpay',
+                            method: 'post',
+                            body: 'a=1&b=2',
+                            headers: {
+                                'content-type': 'application/x-www-form-urlencoded',
+                                'sakura': '500'
+                            },
+                            // 使用方写的函数 successFn，使用方不call。
+                            successFn: (xxx) => {
+                                f1.call(undefined, xxx)
+                                f2.call(undefined, xxx)
+                            },
+                            failFn: (yyy) => {
+                                console.log(yyy)
+                            }
+                        })
+                    })
+                </script>
+            </div>
+
+            <div class='example'>
+                <h3>自制myQuery.AJAX发请求 Promise</h3>
+                <button id='myQAJAXPro'>自制myQuery.AJAX发请求 Promise</button>
+                <script>
+                    window.myQueryPro = function (nodeOrSelector) {
+                        let nodes = {}
+                        nodes.addClass = function () {}
+                        return nodes
+                    }
+                    window.myQueryPro.ajax = function ({
+                        url,
+                        method,
+                        body,
+                        successFn,
+                        failFn,
+                        headers
+                    }) {
+                        // return promise 对象，成功调用resolve，失败调用reject。
+                        return new Promise(function (resolve, reject) {
+                            let request = new XMLHttpRequest()
+                            request.open(method, url)
+                            for (let key in headers) {
+                                let value = headers[key]
+                                request.setRequestHeader(key, value)
+                            }
+                            request.onreadystatechange = () => {
+                                if (request.readyState === 4) {
+                                    if (request.status >= 200 && request.status < 300) {
+                                        resolve.call(undefined, request.responseText)
+                                    } else if (request.status >= 400) {
+                                        reject.call(undefined, request)
+                                    }
+                                }
+                            }
+                            request.send(body)
+                        })
+                    }
+                    // 使用方代码
+                    function f1(responseText) {
+                        console.log(responseText)
+                    }
+
+                    function f2() {
+                        amount.innerText = amount.innerText - 1
+                    }
+
+                    myQAJAXPro.addEventListener('click', (e) => {
+                        window.myQueryPro.ajax({
+                            url: '/myQAJAXpay',
+                            method: 'post',
+                            body: 'a=1&b=2',
+                            headers: {
+                                'content-type': 'application/x-www-form-urlencoded',
+                                'sakura': '500'
+                            },
+                        }).then(
+                            (xxx) => {
+                                f1.call(undefined, xxx)
+                                f2.call(undefined, xxx)
+                            },
+                            (request) => {
+                                console.log(request)
+                            }
+                        )
                     })
                 </script>
             </div>
