@@ -16,22 +16,29 @@
         <h1>前端请求总结</h1>
     </header>
     <main>
+        <!------ 余额显示 ------>
         <div class="amountWrapper">
             <h1>余额<span id="amount">&&&amount&&&</span></h1>
         </div>
 
         <div class="exampleWrapper">
+            <!------ 用 form 发请求 ------>
             <div class='example'>
-                <h3>用form发请求</h3>
+                <h3>用 form 发请求</h3>
                 <form action="/formpay" method="POST" target="result">
                     <input type="submit" value="form付款">
                 </form>
-                <h6>用iframe展示form接收到的响应页面</h6>
+                <h6>用 iframe 展示 form 接收到的响应页面</h6>
                 <iframe name="result" src="about:blank" frameborder="1" height="25"></iframe>
             </div>
-
+            <!------ 用 a 发请求 ------>
             <div class='example'>
-                <h3>用img发请求</h3>
+                <h3>用 a 发请求</h3>
+                <a href="/apay">用a发请求</a>
+            </div>
+            <!------ 用 img 发请求 ------>
+            <div class='example'>
+                <h3>用 img 发请求</h3>
                 <button id="imgButton">img付款</button>
                 <script>
                     imgButton.addEventListener('click', (e) => {
@@ -48,9 +55,22 @@
                     })
                 </script>
             </div>
-
+            <!------ 用 link 发请求 ------>
             <div class='example'>
-                <h3>用script发请求</h3>
+                <h3>用 link 发请求</h3>
+                <button id='linkpay' href="/linkpay">用link发请求</button>
+                <script>
+                    linkpay.onclick = function () {
+                        var link = document.createElement('link')
+                        link.rel = 'stylesheet'
+                        link.href = '/linkpay'
+                        document.head.appendChild(link)
+                    }
+                </script>
+            </div>
+            <!------ 用 script 发请求 ------>
+            <div class='example'>
+                <h3>用 script 发请求</h3>
                 <button id="scriptButton">script付款</button>
                 <script>
                     scriptButton.addEventListener('click', (e) => {
@@ -68,9 +88,9 @@
                     })
                 </script>
             </div>
-
+            <!------ 用 JSONP 发请求 ------>
             <div class='example'>
-                <h3>用JSONP发请求</h3>
+                <h3>用 JSONP 发请求</h3>
                 <button id="JSONPButton">JSONP付款</button>
                 <script>
                     JSONPButton.addEventListener('click', (e) => {
@@ -96,12 +116,12 @@
                             e.currentTarget.remove()
                             delete window[functionName] // 请求完了就干掉这个随机函数
                         }
-
                     })
                 </script>
             </div>
+            <!------ jQuery 用 JSONP 发请求 ------>
             <div class='example'>
-                <h3>jQuery用JSONP发请求</h3>
+                <h3>jQuery 用 JSONP 发请求</h3>
                 <button id="jQueryJSONPButton">jQuery用JSONP付款</button>
                 <script>
                     jQueryJSONPButton.addEventListener('click', (e) => {
@@ -128,27 +148,10 @@
                 </script>
             </div>
 
+            <!------ 用 XMLHttpRequest 发请求 XML 响应 ------>
             <div class='example'>
-                <h3>用a发请求</h3>
-                <a href="/apay">用a发请求</a>
-            </div>
-
-            <div class='example'>
-                <h3>用link发请求</h3>
-                <button id='linkpay' href="/linkpay">用link发请求</button>
-                <script>
-                    linkpay.onclick = function () {
-                        var link = document.createElement('link')
-                        link.rel = 'stylesheet'
-                        link.href = '/linkpay'
-                        document.head.appendChild(link)
-                    }
-                </script>
-            </div>
-
-            <div class='example'>
-                <h3>用XMLHttpRequest发请求 XML响应</h3>
-                <button id='XMLpay'>用XMLHttpRequest发请求 XML响应</button>
+                <h3>用 XMLHttpRequest 发请求 XML 响应</h3>
+                <button id='XMLpay'>用XMLHttpRequest发请求 XML 响应</button>
                 <script>
                     XMLpay.addEventListener('click', (e) => {
                         // 1.构造 XMLHttpRequest 请求
@@ -177,9 +180,10 @@
                     })
                 </script>
             </div>
+            <!------ 用 XMLHttpRequest 发请求 JSON 响应 ------>
             <div class='example'>
-                <h3>用XMLHttpRequest发请求 JSON响应</h3>
-                <button id='JSONpay'>用XMLHttpRequest发请求 JSON响应</button>
+                <h3>用 XMLHttpRequest 发请求 JSON 响应</h3>
+                <button id='JSONpay'>用XMLHttpRequest发请求 JSON 响应</button>
                 <script>
                     JSONpay.addEventListener('click', (e) => {
                         // 1.构造 XMLHttpRequest 请求
@@ -208,8 +212,9 @@
                     })
                 </script>
             </div>
+            <!------ 自制 myQuery.AJAX 发请求 ------>
             <div class='example'>
-                <h3>自制myQuery.AJAX发请求</h3>
+                <h3>自制 myQuery.AJAX 发请求</h3>
                 <button id='myQAJAX'>自制myQuery.AJAX发请求</button>
                 <script>
                     window.myQuery = function (nodeOrSelector) {
@@ -273,9 +278,9 @@
                     })
                 </script>
             </div>
-
+            <!------ 自制 myQuery.AJAX 发请求 Promise ------>
             <div class='example'>
-                <h3>自制myQuery.AJAX发请求 Promise</h3>
+                <h3>自制 myQuery.AJAX 发请求 Promise</h3>
                 <button id='myQAJAXPro'>自制myQuery.AJAX发请求 Promise</button>
                 <script>
                     window.myQueryPro = function (nodeOrSelector) {

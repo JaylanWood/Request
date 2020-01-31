@@ -106,11 +106,11 @@ var server = http.createServer(function (request, response) {
     let callback = query.callback
     response.setHeader('Content-Type', 'application/json')
     response.write(`
-      ${callback}.call(undefined, {
-        "success":true,
-        "left":${newAmount}
-      })
-    `)
+    ${callback}.call(undefined, {
+      "success":true,
+      "left":${newAmount}
+    })
+  `)
 
     response.statusCode = 200
     response.end()
