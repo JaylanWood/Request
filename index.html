@@ -127,7 +127,7 @@
                     jQueryJSONPButton.addEventListener('click', (e) => {
                         // 使用JSONP。jQuery把JSONP归类在ajax，不用在意。
                         $.ajax({
-                            url: "http://localhost:8888/jQueryJSONPpay",
+                            url: "/jQueryJSONPpay",
                             jsonp: "callback",
                             dataType: "jsonp",
 
